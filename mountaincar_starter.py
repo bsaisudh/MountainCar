@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import gym          # Tested on version gym v. 0.14.0 and python v. 3.17
 
+
+
 env = gym.make('MountainCar-v0')
 env.seed(42);
 
@@ -34,7 +36,7 @@ for episode in range(NUM_EPISODES):
         # done flag is set when the episode ends: either goal is reached or
         #       200 steps are done
         next_state, reward, done, _ = env.step(action)
-
+        
         # This is where your NN/GP code should go
         # Create target vector
         # Train the network/GP
