@@ -57,7 +57,7 @@ class SimpleNNagent():
     def trainModel(self):
         self.model.fit(np.asarray(self.trainX),
                        np.asarray(self.trainY),
-                       epochs=1)
+                       epochs=2)
         
     def EpsilonGreedyPolicy(self):
         if random.random() < self.epsilon:
@@ -96,4 +96,83 @@ class SimpleNNagent():
         self.trainX.append(self.nState(currState))
         self.trainY.append(Y)
         return skMSE(Y,self.qValues)
+    
+    def getReward(self, currState, nextState, action, reward, episodeMaxDist, step):
+        
+# =============================================================================
+#         # Reward 1
+#         if nextState[0] >= 0.5 or  nextState[0] > episodeMaxDist:
+#             reward += 5 
+#         else:
+#             reward = nextState[0] + 0.5
+# =============================================================================
+            
+# =============================================================================
+#         # Reward 2
+#         if nextState[0] >= 0.5:
+#             reward += 5
+#         else:
+#             reward = nextState[0] + 0.5
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 3
+#         # No change
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 4
+#         sign = np.array([-1.0,0.0,1.0])
+#         if nextState[1]*sign[action] >= 0:
+#             reward = nextState[0] + 0.5
+#         else:
+#             reward = nextState[0] - 0.5
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 5
+#         sign = np.array([-1.0,0.0,1.0])
+#         if currState[1]*sign[action] >= 0:
+#             reward = nextState[0] + 0.5
+#         else:
+#             reward = nextState[0] - 0.5
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 6
+#         sign = np.array([-1.0,0.0,1.0])
+#         if currState[1]*sign[action] >= 0:
+#             reward = 1
+#         else:
+#             reward = -1
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 7
+#         sign = np.array([-1.0,0.0,1.0])
+#         if currState[1]*sign[action] >= 0:
+#             reward = 1
+#         else:
+#             reward = -1
+#         reward = (0.999**step) * reward
+# =============================================================================
+        
+# =============================================================================
+#         # Reward 8
+#         sign = np.array([-1.0,0.0,1.0])
+#         if currState[1]*sign[action] >= 0:
+#             reward = 1 * (0.99**step) 
+#         else:
+#             reward = -1 * (1.01**step) 
+# =============================================================================
+            
+        # Reward 9
+        sign = np.array([-1.0,0.0,1.0])
+        if currState[1]*sign[action] >= 0:
+            reward = nextState[0] + 1 * (0.99**step)
+        else:
+            reward = nextState[0] - -1 * (1.01**step)
+        
+        return reward
+        
     

@@ -23,8 +23,8 @@ print(env.action_space)
 
 # Parameters
 NUM_STEPS = 200
-NUM_EPISODES = 10000
-LEN_EPISODE = 200
+NUM_EPISODES = 5000
+LEN_EPISODE = 300
 reward_history = []
 loss_history = []
 max_dist = []
@@ -55,20 +55,19 @@ for episode in range(NUM_EPISODES):
         #       200 steps are done
         next_state, reward, done, _ = env.step(action)
         
-        if next_state[0] >= 0.5 or  next_state[0] > episode_maxDist:
-            reward += 1 
-        else:
-            reward = next_state[0] + 0.5
-        
-        
-        
-        loss = agent.buildTrainData(curr_state, next_state, reward, done, action)
+        reward = agent.getReward(curr_state,
+                        next_state, 
+                        action, 
+                        reward, 
+                        episode_maxDist,
+                        step)
 
         # This is where your NN/GP code should go
         # Create target vector
         # Train the network/GP
-        agent.trainModel()
-        agent.newGame()
+        loss = agent.buildTrainData(curr_state, next_state, reward, done, action)
+#        agent.trainModel()
+#        agent.newGame()
 
         # Record history
         episode_reward += reward
@@ -79,7 +78,8 @@ for episode in range(NUM_EPISODES):
         # Current state for next step
         curr_state = next_state
         
-        if done:
+        if (done and step == LEN_EPISODE-1) or (curr_state[0] >=0.5):
+            agent.trainModel()
             if curr_state[0] >=0.5:
                 agent.epsilon *= 0.95
             # Record history
@@ -105,12 +105,28 @@ for episode in range(NUM_EPISODES):
                 plt.xlim([0,NUM_EPISODES])
                 plt.plot(loss_history,'bo')
                 plt.xlabel('Episode')
-                plt.ylabel('Reward')
-                plt.title('Reward Per Episode')
+                plt.ylabel('Loss')
+                plt.title('Loss per episode')
                 plt.pause(0.01)
                 fig.canvas.draw()
+                
+                fig = plt.figure(3)
+                plt.clf()
+                plt.xlim([0,NUM_EPISODES])
+                plt.plot(max_dist,'yo')
+                plt.xlabel('Episode')
+                plt.ylabel('Max Distance')
+                plt.title('Max distance Per Episode')
+                plt.pause(0.01)
+                fig.canvas.draw()
+                
+            if episode % 100 == 0:
+                pv.ploicyViz(agent)  
+            if episode % 500 == 0:
+                agent.model.save("model.h5")
+                
             break
-    break
-    
-    pv.ploicyViz(agent)
+#    break
+agent.model.save("model.h5")
+pv.ploicyViz(agent)
             

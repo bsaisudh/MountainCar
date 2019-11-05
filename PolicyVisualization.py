@@ -42,9 +42,17 @@ def ploicyViz(agent):
     ax.set_ylabel('Velocity')
     ax.set_title('Policy')
     recs = []
-#    for i in range(0,3):
-#         recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
-#    plt.legend(recs,labels,loc=4,ncol=3)
+    try:
+        for i in range(0,3):
+             recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+    except:
+         try:
+              for i in range(0,2):
+                 recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+         except:
+             for i in range(0,1):
+                 recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+    plt.legend(recs,labels,loc=4,ncol=3)
 #    fig.savefig('Policy - Modified.png')
     plt.show()
 
