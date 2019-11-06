@@ -69,7 +69,6 @@ class SimpleNNagent():
             action = np.random.choice(
                             np.where(self.qValues == np.max(self.qValues))[0]
                             )
-            
         return action
     
     def newGame(self):
@@ -80,6 +79,13 @@ class SimpleNNagent():
         self.qValues = self.model.predict(np.reshape(self.nState(state),(-1,2)))[0]
         action = self.EpsilonGreedyPolicy()
         return action    
+    
+    def getAction(self,state):
+        self.qValues = self.model.predict(np.reshape(self.nState(state),(-1,2)))[0]
+        action = np.random.choice(
+                            np.where(self.qValues == np.max(self.qValues))[0]
+                            )
+        return action  
     
     def buildTrainData(self, currState, nextState, reward, done, action):
         qVal = self.model.predict(np.reshape(self.nState(nextState),(-1,2)))[0]
@@ -166,13 +172,25 @@ class SimpleNNagent():
 #             reward = -1 * (1.01**step) 
 # =============================================================================
             
-        # Reward 9
+# =============================================================================
+#         # Reward 9
+#         sign = np.array([-1.0,0.0,1.0])
+#         if currState[1]*sign[action] >= 0:
+#             reward = nextState[0] + 1 * (0.99**step)
+#         else:
+#             reward = nextState[0] - -1 * (1.01**step)
+# =============================================================================
+        
+        # Reward 10
         sign = np.array([-1.0,0.0,1.0])
         if currState[1]*sign[action] >= 0:
-            reward = nextState[0] + 1 * (0.99**step)
+            reward = 1
         else:
-            reward = nextState[0] - -1 * (1.01**step)
-        
+            reward = -1
+        reward = (0.8**step) * reward
+        if nextState[0] >=0.5:
+            reward+= 100
+                    
         return reward
         
     
