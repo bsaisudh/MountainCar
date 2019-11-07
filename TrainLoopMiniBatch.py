@@ -60,7 +60,6 @@ for episode in range(NUM_EPISODES):
         # done flag is set when the episode ends: either goal is reached or
         #       200 steps are done
         next_state, reward, done, _ = env.step(action)
-#        time.sleep(0.001)
         
         reward = agent.getReward(curr_state,
                         next_state, 
@@ -72,7 +71,11 @@ for episode in range(NUM_EPISODES):
         # This is where your NN/GP code should go
         # Create target vector
         # Train the network/GP
-        loss = agent.buildTrainData(curr_state, next_state, reward, done, action)
+        agent.buildReplayMemory(curr_state, next_state, reward, done, action)
+#        loss = agent.miniBatchTrainModel()
+        loss = agent.buildMiniBatchTrainData()
+#        print(f"loss : {loss}")
+        agent.trainModel()
 
         # Record history
         episode_reward += reward
@@ -87,7 +90,6 @@ for episode in range(NUM_EPISODES):
         curr_state = next_state
         
         if (done and step == LEN_EPISODE-1) or (curr_state[0] >=0.5):
-            agent.trainModel()
             if curr_state[0] >=0.5:
                 agent.epsilon *= 0.95
             # Record history
@@ -134,7 +136,6 @@ for episode in range(NUM_EPISODES):
                     fig.canvas.draw()
                 
                 agent.model.save("model.h5")
-                 
                 
             break
     if episode % 100 == 0 and dispFlag:
