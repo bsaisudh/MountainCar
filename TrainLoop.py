@@ -32,7 +32,7 @@ reward_history = []
 loss_history = []
 max_dist = []
 maxDist = -0.4
-dispFlag = False
+dispFlag = True
 
 agent = sNN.SimpleNNagent(env)
 
@@ -67,7 +67,8 @@ for episode in range(NUM_EPISODES):
                         action, 
                         reward, 
                         maxDist,
-                        step)
+                        step,
+                        done)
 
         # This is where your NN/GP code should go
         # Create target vector
@@ -86,7 +87,7 @@ for episode in range(NUM_EPISODES):
         # Current state for next step
         curr_state = next_state
         
-        if (done and step == LEN_EPISODE-1) or (curr_state[0] >=0.5):
+        if done:
             agent.trainModel()
             if curr_state[0] >=0.5:
                 agent.epsilon *= 0.95

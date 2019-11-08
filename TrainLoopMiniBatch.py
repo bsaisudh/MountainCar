@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import gym          # Tested on version gym v. 0.14.0 and python v. 3.17
 import time
 import pickle as pkl
+import numpy as np
 
 import SimpleNNagent as sNN
 import PolicyVisualization as pv
@@ -19,6 +20,7 @@ env = gym.make('MountainCar-v0')
 env.seed(42);
 
 # Print some info about the environment
+print("MiniBatch Training Loop")
 print("State space (gym calls it observation space)")
 print(env.observation_space)
 print("\nAction space")
@@ -32,10 +34,24 @@ reward_history = []
 loss_history = []
 max_dist = []
 maxDist = -0.4
-dispFlag = False
+dispFlag = True
 
 agent = sNN.SimpleNNagent(env)
 
+# =============================================================================
+# for episode in range(1000):
+#     print(f"episode : {episode}")
+#     state = env.reset()
+#     for step in range(200):
+#         if episode % 50 == 0 and dispFlag:
+#                 env.render()
+#         state, reward, done, _ = env.step(np.random.randint(0,3))
+#         time.sleep(0.001)
+#         if done:
+#             break
+#     
+# 
+# =============================================================================
 # Run for NUM_EPISODES
 for episode in range(NUM_EPISODES):
     agent.newGame()
@@ -48,7 +64,7 @@ for episode in range(NUM_EPISODES):
     for step in range(LEN_EPISODE):
         # Comment to stop rendering the environment
         # If you don't render, you can speed things up
-        if episode % 50 == 0 and dispFlag:
+        if episode % 25 == 0 and dispFlag:
             env.render()
         
         # Randomly sample an action from the action space
@@ -66,7 +82,8 @@ for episode in range(NUM_EPISODES):
                         action, 
                         reward, 
                         maxDist,
-                        step)
+                        step,
+                        done)
 
         # This is where your NN/GP code should go
         # Create target vector
@@ -76,6 +93,8 @@ for episode in range(NUM_EPISODES):
         loss = agent.buildMiniBatchTrainData()
 #        print(f"loss : {loss}")
         agent.trainModel()
+        if agent.epsilon >= agent.minEpsilon:
+            agent.epsilon *= agent.epsilonDecay
 
         # Record history
         episode_reward += reward
@@ -89,9 +108,9 @@ for episode in range(NUM_EPISODES):
         # Current state for next step
         curr_state = next_state
         
-        if (done and step == LEN_EPISODE-1) or (curr_state[0] >=0.5):
-            if curr_state[0] >=0.5:
-                agent.epsilon *= 0.95
+        if done:
+#            if curr_state[0] >=0.5:
+#                agent.epsilon *= 0.95
             # Record history
             reward_history.append(episode_reward)
             loss_history.append(episode_loss)
