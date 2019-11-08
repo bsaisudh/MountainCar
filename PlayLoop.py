@@ -22,15 +22,17 @@ print(env.action_space)
 
 # Parameters
 NUM_STEPS = 200
-NUM_EPISODES = 30
-LEN_EPISODE = 300
+NUM_EPISODES = 100
+LEN_EPISODE = 200
 reward_history = []
 loss_history = []
 max_dist = []
 final_position = []
+success = 0
+noSteps = []
 
 agent = sNN.SimpleNNagent(env)
-agent.model.load_weights("model.h5")
+agent.model.load_weights("model_discrete.h5")
 
 # Run for NUM_EPISODES
 for episode in range(NUM_EPISODES):
@@ -66,8 +68,12 @@ for episode in range(NUM_EPISODES):
         # Current state for next step
         curr_state = next_state
         
+        
         if (done and step == LEN_EPISODE-1) or (curr_state[0] >=0.5):
             # Record history
+            if curr_state[0] >= 0.5:
+                success += 1
+                noSteps.append(step)
             reward_history.append(episode_reward)
             loss_history.append(episode_loss)
             max_dist.append(episode_maxDist)
@@ -88,10 +94,10 @@ for episode in range(NUM_EPISODES):
                 fig = plt.figure(2)
                 plt.clf()
                 plt.xlim([0,NUM_EPISODES])
-                plt.plot(loss_history,'bo')
+                plt.plot(noSteps,'bo')
                 plt.xlabel('Episode')
-                plt.ylabel('Loss')
-                plt.title('Loss per episode')
+                plt.ylabel('Number of Steps')
+                plt.title('Number of steps Taken Per Episode')
                 plt.pause(0.01)
                 fig.canvas.draw()
                 
@@ -106,3 +112,7 @@ for episode in range(NUM_EPISODES):
                 fig.canvas.draw()
                 
             break
+print("----------------------  Metrics  ----------------------")
+print(f"Number of Episodes = {NUM_EPISODES}")
+print(f"Success Rate = {success} %")
+print(f"Average number of steps taken  = {sum(noSteps)/len(noSteps)}")

@@ -73,11 +73,11 @@ def ploicyViz_Cont(agent, action_cont):
     
     Z_dir = []
     for act in Z:
-        if action_cont[act] > 0:
+        if action_cont[act] > 0.25:
             Z_dir.append(2)
-        if action_cont[act] < 0:
+        elif action_cont[act] < -0.25:
             Z_dir.append(1)
-        if action_cont[act] == 0:
+        else:
             Z_dir.append(0)
         
     Z = pd.Series(Z_dir)

@@ -1,0 +1,4 @@
+----------------------  Metrics  ----------------------
+Number of Episodes = 100
+Success Rate = 75 %
+Average number of steps taken  = 181.28

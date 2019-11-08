@@ -321,7 +321,6 @@ class SimpleNNagent():
 #             reward=reward-10
 #         if nextState[0]>= 0.5:
 #             reward += 1000
-#         reward = (0.8**step)*reward
 # =============================================================================
             
         return reward
