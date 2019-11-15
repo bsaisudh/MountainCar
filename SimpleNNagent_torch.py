@@ -18,9 +18,6 @@ import torch.optim as optim
 
 from torch.utils.tensorboard import SummaryWriter
 
-
-summary_writer = SummaryWriter(log_dir=f"tf_log/demo_{random.randint(0, 1000)}")
-
 class agentModel(nn.Module):
     def __init__(self,iSize, oSize):
         super().__init__()
@@ -49,6 +46,7 @@ class SimpleNNagent_torch():
         self.sHigh = env.observation_space.high
         self.nActions = env.action_space.n
         self.buildModel(env.observation_space.shape[0], env.action_space.n)
+        self.sw = SummaryWriter(log_dir=f"tf_log/demo_{random.randint(0, 1000)}")
         
     def nState(self, state):
 #        return np.divide(state-self.sLow,
@@ -190,4 +188,19 @@ class SimpleNNagent_torch():
         X = torch.from_numpy(np.reshape(testSample,(-1,2))).to(self.device)
         predY = self.model(X.float()).cpu().detach().numpy()
         return predY
+    
+    def summaryWriter_showNetwork(self):
+        self.sw.add_graph(self.model, torch.tensor([1.0, 1.0]).to(self.device))
+    
+    def summaryWriter_addMetrics(self, episode, loss, reward, maxDist):
+        self.sw.add_scalar('Loss', loss, episode)
+        self.sw.add_scalar('Reward', reward, episode)
+        self.sw.add_scalar('MaxDistance', maxDist, episode)
+        
+        self.sw.add_histogram('l1.bias', self.model.l1.bias, episode)
+        self.sw.add_histogram('l1.weight', self.model.l1.weight, episode)
+#        self.sw.add_histogram('l1.weight.grad', self.model.l1.weight.grad, episode)
+    
+    def summaryWriter_close(self):
+        self.sw.close()
     

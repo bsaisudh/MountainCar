@@ -37,6 +37,7 @@ maxDist = -0.4
 dispFlag = True
 
 agent = sNN.SimpleNNagent_torch(env)
+agent.summaryWriter_showNetwork()
 
 # Run for NUM_EPISODES
 for episode in range(NUM_EPISODES):
@@ -97,6 +98,7 @@ for episode in range(NUM_EPISODES):
             reward_history.append(episode_reward)
             loss_history.append(episode_loss)
             max_dist.append(episode_maxDist)
+            agent.summaryWriter_addMetrics(episode, episode_loss, episode_reward, episode_maxDist)
             # You may want to plot periodically instead of after every episode
             # Otherwise, things will slow
             if episode % 25 == 0:
@@ -148,4 +150,4 @@ agent.saveModel("model_torch.h5")
 pkl.dump([max_dist, loss_history, reward_history], open( "history.pkl", "wb" ))
 #[max_dist, loss_history, reward_history] = pkl.load( open( "history.pkl", "rb" ))
 pv.ploicyViz_torch(agent)
-            
+agent.summaryWriter_close()

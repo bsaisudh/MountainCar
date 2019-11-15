@@ -34,6 +34,7 @@ noSteps = []
 
 agent = sNN.SimpleNNagent_torch(env)
 agent.loadModel("model_torch_discrete.h5")
+agent.summaryWriter_showNetwork()
 
 # Run for NUM_EPISODES
 for episode in range(NUM_EPISODES):
@@ -79,6 +80,7 @@ for episode in range(NUM_EPISODES):
             loss_history.append(episode_loss)
             max_dist.append(episode_maxDist)
             final_position.append(curr_state[0])
+            agent.summaryWriter_addMetrics(episode, episode_loss, episode_reward, episode_maxDist)
             # You may want to plot periodically instead of after every episode
             # Otherwise, things will slow
             if episode % 25 == 0:
@@ -113,6 +115,7 @@ for episode in range(NUM_EPISODES):
                 fig.canvas.draw()
                 
             break
+agent.summaryWriter_close()
 print("----------------------  Metrics  ----------------------")
 print(f"Number of Episodes = {NUM_EPISODES}")
 print(f"Success Rate = {success} %")
