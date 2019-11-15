@@ -36,22 +36,8 @@ max_dist = []
 maxDist = -0.4
 dispFlag = True
 
-agent = sNN.SimpleNNagent(env)
+agent = sNN.SimpleNNagent_torch(env)
 
-# =============================================================================
-# for episode in range(1000):
-#     print(f"episode : {episode}")
-#     state = env.reset()
-#     for step in range(200):
-#         if episode % 50 == 0 and dispFlag:
-#                 env.render()
-#         state, reward, done, _ = env.step(np.random.randint(0,3))
-#         time.sleep(0.001)
-#         if done:
-#             break
-#     
-# 
-# =============================================================================
 # Run for NUM_EPISODES
 for episode in range(NUM_EPISODES):
     agent.newGame()
@@ -89,9 +75,7 @@ for episode in range(NUM_EPISODES):
         # Create target vector
         # Train the network/GP
         agent.buildReplayMemory(curr_state, next_state, reward, done, action)
-#        loss = agent.miniBatchTrainModel()
         loss = agent.buildMiniBatchTrainData()
-#        print(f"loss : {loss}")
         agent.trainModel()
         if agent.epsilon >= agent.minEpsilon:
             agent.epsilon *= agent.epsilonDecay
@@ -109,8 +93,6 @@ for episode in range(NUM_EPISODES):
         curr_state = next_state
         
         if done:
-#            if curr_state[0] >=0.5:
-#                agent.epsilon *= 0.95
             # Record history
             reward_history.append(episode_reward)
             loss_history.append(episode_loss)
@@ -154,16 +136,16 @@ for episode in range(NUM_EPISODES):
                     plt.pause(0.01)
                     fig.canvas.draw()
                 
-#                agent.model.save("model.h5")
+                agent.saveModel("model_torch.h5")
                 
             break
     if episode % 100 == 0 and dispFlag:
         pass
-#        pv.ploicyViz(agent)  
+        pv.ploicyViz_torch(agent)  
 #    break
     
-#agent.model.save("model.h5")
+agent.saveModel("model_torch.h5")
 pkl.dump([max_dist, loss_history, reward_history], open( "history.pkl", "wb" ))
 #[max_dist, loss_history, reward_history] = pkl.load( open( "history.pkl", "rb" ))
-#pv.ploicyViz(agent)
+pv.ploicyViz_torch(agent)
             

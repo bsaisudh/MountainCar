@@ -14,8 +14,6 @@ import matplotlib.pyplot as plt
 
 
 def ploicyViz(agent):
-
-
     X = np.random.uniform(-1.2, 0.6, 10000)
     Y = np.random.uniform(-0.07, 0.07, 10000)
     Z = []
@@ -30,9 +28,6 @@ def ploicyViz(agent):
     colors = {0:'blue',1:'lime',2:'red'}
     colors = Z.apply(lambda x:colors[x])
     labels = ['Left','Right','Nothing']
-    
-    
-    
     
     fig = plt.figure(5, figsize=[7,7])
     ax = fig.gca()
@@ -58,8 +53,6 @@ def ploicyViz(agent):
     
     
 def ploicyViz_Cont(agent, action_cont):
-
-
     X = np.random.uniform(-1.2, 0.6, 10000)
     Y = np.random.uniform(-0.07, 0.07, 10000)
     Z = []
@@ -85,9 +78,6 @@ def ploicyViz_Cont(agent, action_cont):
     colors = Z.apply(lambda x:colors[x])
     labels = ['Left','Right','Nothing']
     
-    
-    
-    
     fig = plt.figure(5, figsize=[7,7])
     ax = fig.gca()
     plt.set_cmap('brg')
@@ -109,4 +99,41 @@ def ploicyViz_Cont(agent, action_cont):
     plt.legend(recs,labels,loc=4,ncol=3)
 #    fig.savefig('Policy - Modified.png')
     plt.show()
+    
 
+def ploicyViz_torch(agent):
+    X = np.random.uniform(-1.2, 0.6, 10000)
+    Y = np.random.uniform(-0.07, 0.07, 10000)
+    Z = []
+    for i in range(len(X)):
+        q = agent.modelPredict(np.reshape(np.asarray([X[i],Y[i]]),(-1,2)))[0]
+        temp = np.random.choice(
+                                np.where(q == np.max(q))[0]
+                                )
+        z = temp
+        Z.append(z)
+    Z = pd.Series(Z)
+    colors = {0:'blue',1:'lime',2:'red'}
+    colors = Z.apply(lambda x:colors[x])
+    labels = ['Left','Right','Nothing']
+    
+    fig = plt.figure(5, figsize=[7,7])
+    ax = fig.gca()
+    plt.set_cmap('brg')
+    surf = ax.scatter(X,Y, c=Z)
+    ax.set_xlabel('Position')
+    ax.set_ylabel('Velocity')
+    ax.set_title('Policy')
+    recs = []
+    try:
+        for i in range(0,3):
+             recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+    except:
+         try:
+              for i in range(0,2):
+                 recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+         except:
+             for i in range(0,1):
+                 recs.append(mpatches.Rectangle((0,0),1,1,fc=sorted(colors.unique())[i]))
+    plt.legend(recs,labels,loc=4,ncol=3)
+    plt.show()
